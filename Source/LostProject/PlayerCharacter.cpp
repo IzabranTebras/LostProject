@@ -1,6 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerCharacter.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -8,6 +11,14 @@ APlayerCharacter::APlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
+	SpringArmComp->SetupAttachment(RootComponent);
+	SpringArmComp->bUsePawnControlRotation = true;
+
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
+	CameraComp->SetupAttachment(SpringArmComp);
 }
 
 // Called when the game starts or when spawned
@@ -25,6 +36,16 @@ void APlayerCharacter::MoveForward(float Value)
 void APlayerCharacter::MoveRight(float Value)
 {
 	AddMovementInput(GetActorRightVector() * Value);
+}
+
+void APlayerCharacter::BeginCrouch()
+{
+	Crouch();
+}
+
+void APlayerCharacter::EndCrouch()
+{
+	UnCrouch();
 }
 
 // Called every frame
@@ -46,5 +67,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// Camera
 	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("Turn", this, &APlayerCharacter::AddControllerYawInput);
+
+	// Character actions
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::BeginCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::EndCrouch);
 }
 
