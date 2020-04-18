@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Camera/PlayerCameraManager.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -30,6 +31,7 @@ void APlayerCharacter::BeginPlay()
 
 void APlayerCharacter::MoveForward(float Value)
 {
+	// Rotation by camera
 	AddMovementInput(GetActorForwardVector() * Value);
 }
 
@@ -52,7 +54,6 @@ void APlayerCharacter::EndCrouch()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -67,6 +68,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// Camera
 	PlayerInputComponent->BindAxis("LookUp", this, &APlayerCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("Turn", this, &APlayerCharacter::AddControllerYawInput);
+
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMax = cameraViewPitchMax;
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->ViewPitchMin = cameraViewPitchMin;
 
 	// Character actions
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::BeginCrouch);

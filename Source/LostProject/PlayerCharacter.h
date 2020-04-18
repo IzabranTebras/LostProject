@@ -18,6 +18,12 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -33,11 +39,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USpringArmComponent* SpringArmComp;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
+	float cameraViewPitchMax = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
+	float cameraViewPitchMin = 0.0f;
 };
